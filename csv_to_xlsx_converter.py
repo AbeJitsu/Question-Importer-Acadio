@@ -161,8 +161,9 @@ def create_xlsx_output(questions, output_file_path, section_id="DTOX101-LESSON1"
         parts = re.findall(r'\d+', section)
         if len(parts) >= 2:
             # Convert to integers for numerical sorting: e.g., "1.2" -> (1, 2)
-            return tuple(int(p) for p in parts)
-        return (section,)  # Fallback to string if pattern doesn't match
+            return (0, tuple(int(p) for p in parts), section)
+        # Fallback to string if pattern doesn't match, with prefix to sort after numbers
+        return (1, (), section)
 
     for section, count in sorted(section_counts.items(), key=natural_sort_key):
         debug_rows.append([f'  {section}', f'{count} questions'])
