@@ -15,18 +15,19 @@ import re
 from pathlib import Path
 
 # Configuration - Easy to modify defaults
-INPUT_CSV = "input/PREP-AL 4th Ed Instructor Test Pack Question Excel Database 9-30-25.xlsx - Sheet1.csv"
-OUTPUT_NAME = "output/upload_ready_questions"
+INPUT_CSV = "input/PREP-AL 4th Ed Question Excel Database 9-30-25.xlsx - Sheet1.csv"
+OUTPUT_NAME = "output/upload_ready_questions_std"
 
 def extract_source_prefix(filename):
     """
     Auto-detect source prefix from filename
 
-    What: Extracts identifier prefix from input filename
-    Why: Automatically generates source IDs without manual configuration
-    How: Uses regex to extract first word/acronym pattern from filename
+    What: Extracts identifier prefix from input filename with type suffix
+    Why: Automatically generates unique source IDs for different question sets
+    How: Uses regex to extract pattern, then adds -ITP or -STD suffix based on filename
 
-    Example: "PREP-AL 4th Ed..." -> "PREP-AL"
+    Example: "PREP-AL 4th Ed Instructor..." -> "PREP-AL-ITP"
+             "PREP-AL 4th Ed..." -> "PREP-AL-STD"
     """
     # Remove path and get just filename
     base_name = Path(filename).stem
@@ -34,11 +35,18 @@ def extract_source_prefix(filename):
     # Try to extract pattern like "PREP-AL" or "PREP-FL"
     match = re.match(r'^([A-Z]+-[A-Z]+)', base_name)
     if match:
-        return match.group(1)
+        base_prefix = match.group(1)
+    else:
+        # Fallback: take first word
+        base_prefix = base_name.split()[0] if base_name else "UNKNOWN"
 
-    # Fallback: take first word
-    first_word = base_name.split()[0] if base_name else "UNKNOWN"
-    return first_word
+    # Add suffix based on file type to ensure unique IDs
+    if "Instructor" in base_name:
+        return f"{base_prefix}-ITP"  # Instructor Test Pack
+    else:
+        return f"{base_prefix}-STD"  # Standard edition
+
+    return base_prefix
 
 def convert_answer_letter_to_number(letter):
     """
