@@ -15,8 +15,8 @@ import re
 from pathlib import Path
 
 # Configuration - Easy to modify defaults
-INPUT_CSV = "input/PREP-AL 4th Ed Question Excel Database 9-30-25.xlsx - Sheet1.csv"
-OUTPUT_NAME = "output/upload_ready_questions_std"
+INPUT_CSV = "input/PREP7 Test Bank Excel Database 5-4-23.xlsx - Sheet1.csv"
+OUTPUT_NAME = "output/upload_ready_questions_prep7"
 
 def extract_source_prefix(filename):
     """
